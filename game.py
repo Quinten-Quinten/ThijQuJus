@@ -14,6 +14,7 @@ zwart = (0, 0, 0)
 wit = (255, 255, 255)
 groen = (0, 255, 0)
 geel = (255, 255, 0)
+rood = (255, 0, 0)
 
 # speler
 schip_breedte = 30
@@ -26,6 +27,17 @@ schip_snelheid = 0.12
 kogels = []
 kogel_snelheid = 0.2
 
+#aliens
+aliens = []
+alien_breedte = 40
+alien_hoogte = 30
+
+for rij in range(3):
+    for kolom in range(8):
+        x = kolom * 60 + 50
+        y = rij * 50 + 50
+        aliens.append([x, y])
+
 #dit tekent de schip op het scherm
 def teken_schip(x, y):
     pygame.draw.rect(scherm, groen, (x, y, schip_breedte, schip_hoogte))
@@ -33,7 +45,12 @@ def teken_schip(x, y):
 #tekent de kogels op het scherm
 def teken_kogels():
     for kogel in kogels:
-        pygame.draw.rect(scherm, geel, (kogel[0], kogel[1], 5, 15))
+        pygame.draw.rect(scherm, rood, (kogel[0], kogel[1], 5, 15))
+
+#tekent de aliens op het scherm
+def teken_aliens():
+    for alien in aliens:
+        pygame.draw.rect(scherm, geel, (alien[0], alien[1], alien_breedte, alien_hoogte))
 
 # de loop voor het spel
 draait = True
@@ -65,12 +82,12 @@ while draait:
         # verwijder kogels die van het scherm zijn
         if kogel[1] < 0:
             kogels.remove(kogel)
-            print(len(kogels))
 
 
     scherm.fill(zwart)
     teken_schip(schip_x, schip_y)
     teken_kogels()
+    teken_aliens()
     
     pygame.display.flip()
 
