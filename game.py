@@ -13,6 +13,7 @@ pygame.display.set_caption("Space Invaders")
 zwart = (0, 0, 0)
 wit = (255, 255, 255)
 groen = (0, 255, 0)
+geel = (255, 255, 0)
 
 # speler
 schip_breedte = 30
@@ -21,9 +22,18 @@ schip_x = breedte // 2 - schip_breedte // 2
 schip_y = hoogte - 60
 schip_snelheid = 0.12
 
+#kogels
+kogels = []
+kogel_snelheid = 0.2
+
 #dit tekent de schip op het scherm
 def teken_schip(x, y):
     pygame.draw.rect(scherm, groen, (x, y, schip_breedte, schip_hoogte))
+
+#tekent de kogels op het scherm
+def teken_kogels():
+    for kogel in kogels:
+        pygame.draw.rect(scherm, geel, (kogel[0], kogel[1], 5, 15))
 
 # de loop voor het spel
 draait = True
@@ -31,6 +41,12 @@ while draait:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             draait = False
+        # checkt of er een toets is ingedrukt
+        if event.type == pygame.KEYDOWN:
+            # als de spatiebalk wordt ingedrukt, wordt er een kogel gemaakt
+            if event.key == pygame.K_SPACE:
+                #maakt de kogel boven het schip
+                kogels.append([schip_x + schip_breedte // 2, schip_y])
     
     # toetsen checken of er beweging plaats vindt
     toetsen = pygame.key.get_pressed()
@@ -45,6 +61,7 @@ while draait:
 
     scherm.fill(zwart)
     teken_schip(schip_x, schip_y)
+    teken_kogels()
     
     pygame.display.flip()
 
