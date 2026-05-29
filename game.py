@@ -34,7 +34,7 @@ alien_hoogte = 30
 
 for rij in range(3):
     for kolom in range(8):
-        x = kolom * 60 + 50
+        x = kolom * 50 + 100
         y = rij * 50 + 50
         aliens.append([x, y])
 
@@ -51,6 +51,18 @@ def teken_kogels():
 def teken_aliens():
     for alien in aliens:
         pygame.draw.rect(scherm, geel, (alien[0], alien[1], alien_breedte, alien_hoogte))
+
+# deze functie checkt of er een kogel een alien raakt en als dat zo is worden zowel de kogel als de alien verwijderd
+def check_collisie():
+    for kogel in kogels[:]:
+        for alien in aliens[:]:
+            if (kogel[0] < alien[0] + alien_breedte and
+                kogel[0] + 5 > alien[0] and
+                kogel[1] < alien[1] + alien_hoogte and
+                kogel[1] + 15 > alien[1]):
+                kogels.remove(kogel)
+                aliens.remove(alien)
+                break
 
 # de loop voor het spel
 draait = True
@@ -83,6 +95,7 @@ while draait:
         if kogel[1] < 0:
             kogels.remove(kogel)
 
+    check_collisie()
 
     scherm.fill(zwart)
     teken_schip(schip_x, schip_y)
