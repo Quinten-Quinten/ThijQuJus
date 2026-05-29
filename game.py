@@ -10,6 +10,7 @@ scherm = pygame.display.set_mode((breedte, hoogte))
 pygame.display.set_caption("Space Invaders")
 
 game_over = False
+game_state = "start"
 
 # kleuren
 zwart = (0, 0, 0)
@@ -105,6 +106,22 @@ while draait:
             # als de R toets wordt ingedrukt, wordt het spel gereset
             if event.key == pygame.K_r and game_over:
                 reset_game()
+        if event.type == pygame.KEYDOWN:
+            if game_state == "start":
+                game_state = "playing"
+
+    # als het spel nog niet is begonnen krijg je dit startscherm te zien
+    if game_state == "start":
+        scherm.fill(zwart)
+
+        titel = pygame.font.SysFont("arial", 50).render("SPACE INVADERS", True, wit)
+        knop = pygame.font.SysFont("arial", 30).render("Klik om te starten", True, groen)
+
+        scherm.blit(titel, (breedte // 2 - 210, hoogte // 2 - 80))
+        scherm.blit(knop, (breedte // 2 - 120, hoogte // 2))
+
+        pygame.display.flip()
+        continue
 
     # toetsen checken of er beweging plaats vindt
     if not game_over:
