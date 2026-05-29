@@ -58,6 +58,15 @@ while draait:
         schip_y -= schip_snelheid
     if toetsen[pygame.K_DOWN] and schip_y < hoogte - schip_hoogte:
         schip_y += schip_snelheid
+    
+    # dit beweegt de kogels omhoog
+    for kogel in kogels[:]:
+        kogel[1] -= kogel_snelheid
+        # verwijder kogels die van het scherm zijn
+        if kogel[1] < 0:
+            kogels.remove(kogel)
+            print(len(kogels))
+
 
     scherm.fill(zwart)
     teken_schip(schip_x, schip_y)
