@@ -175,6 +175,10 @@ while draait:
             alien[1] + alien_hoogte > schip_y):
             game_over = True
             final_score = score
+        # als alien de onderkant van het scherm bereikt is het ook game over
+        if alien[1] + alien_hoogte >= hoogte:
+            game_over = True
+            final_score = score
 
     scherm.fill(zwart)
     if not game_over:
