@@ -25,6 +25,7 @@ schip_hoogte = 50
 schip_x = breedte // 2 - schip_breedte // 2
 schip_y = hoogte - 60
 schip_snelheid = 0.15
+schip_grens_y = hoogte - 200
 
 #kogels
 kogels = []
@@ -70,6 +71,25 @@ def check_collisie():
                 aliens.remove(alien)
                 break
 
+# deze functie reset het spel naar de beginwaarden zodat je opnieuw kan spelen
+def reset_game():
+    global schip_x, schip_y, kogels, aliens, game_over, alien_richting
+
+    schip_x = breedte // 2 - schip_breedte // 2
+    schip_y = hoogte - 60
+
+    kogels = []
+
+    aliens = []
+    for rij in range(3):
+        for kolom in range(8):
+            x = kolom * 50 + 100
+            y = rij * 50 + 50
+            aliens.append([x, y])
+
+    alien_richting = 1
+    game_over = False
+
 # de loop voor het spel
 draait = True
 while draait:
@@ -82,38 +102,45 @@ while draait:
             if event.key == pygame.K_SPACE:
                 #maakt de kogel boven het schip
                 kogels.append([schip_x + schip_breedte // 2, schip_y])
+            # als de R toets wordt ingedrukt, wordt het spel gereset
+            if event.key == pygame.K_r and game_over:
+                reset_game()
 
     # toetsen checken of er beweging plaats vindt
-    toetsen = pygame.key.get_pressed()
-    if toetsen[pygame.K_LEFT] and schip_x > 0:
-        schip_x -= schip_snelheid
-    if toetsen[pygame.K_RIGHT] and schip_x < breedte - schip_breedte:
-        schip_x += schip_snelheid
-    if toetsen[pygame.K_UP] and schip_y > 0:
-        schip_y -= schip_snelheid
-    if toetsen[pygame.K_DOWN] and schip_y < hoogte - schip_hoogte:
-        schip_y += schip_snelheid
+    if not game_over:
+        toetsen = pygame.key.get_pressed()
+        if toetsen[pygame.K_LEFT] and schip_x > 0:
+            schip_x -= schip_snelheid
+        if toetsen[pygame.K_RIGHT] and schip_x < breedte - schip_breedte:
+            schip_x += schip_snelheid
+        if toetsen[pygame.K_UP] and schip_y > schip_grens_y:
+            schip_y -= schip_snelheid
+        if toetsen[pygame.K_DOWN] and schip_y < hoogte - schip_hoogte:
+            schip_y += schip_snelheid
 
     # dit beweegt de kogels omhoog
-    for kogel in kogels[:]:
-        kogel[1] -= kogel_snelheid
-        # verwijder kogels die van het scherm zijn
-        if kogel[1] < 0:
-            kogels.remove(kogel)
+    if not game_over:
+        for kogel in kogels[:]:
+            kogel[1] -= kogel_snelheid
+            # verwijder kogels die van het scherm zijn
+            if kogel[1] < 0:
+                kogels.remove(kogel)
 
     # beweeg de aliens
-    rand_bereikt = False
-    for alien in aliens:
-        alien[0] += alien_snelheid * alien_richting
-        # checkt of alien de rand van het scherm heeft bereikt
-        if alien[0] <= 0 or alien[0] >= breedte - alien_breedte:
-            rand_bereikt = True
-
-    # als de alien de rand heeft bereikt verandert de richting en dalen ze naar beneden 
-    if rand_bereikt:
-        alien_richting *= -1
+    if not game_over:
+        rand_bereikt = False
         for alien in aliens:
-            alien[1] += alien_daling
+            alien[0] += alien_snelheid * alien_richting
+            # checkt of alien de rand van het scherm heeft bereikt
+            if alien[0] <= 0 or alien[0] >= breedte - alien_breedte:
+                rand_bereikt = True
+
+    # als de alien de rand heeft bereikt verandert de richting en dalen ze naar beneden
+    if not game_over:
+        if rand_bereikt:
+            alien_richting *= -1
+            for alien in aliens:
+                alien[1] += alien_daling
 
     check_collisie()
 
@@ -126,17 +153,19 @@ while draait:
             game_over = True
 
     scherm.fill(zwart)
-
-    teken_kogels()
-    teken_aliens()
+    if not game_over:
+        teken_kogels()
+        teken_aliens()
 
     if not game_over:
         teken_schip(schip_x, schip_y)
 
     # als het game over is krijg je tekst Game Over
     if game_over:
-        tekst = pygame.font.SysFont("arial", 40).render("Game Over", True, wit)
-        scherm.blit(tekst, (breedte // 2 - 100, hoogte // 2))
+        tekst1 = pygame.font.SysFont("arial", 40).render("Game Over", True, wit)
+        tekst2 = pygame.font.SysFont("arial", 25).render("Druk op R om opnieuw te spelen", True, wit)
+        scherm.blit(tekst1, (breedte // 2 - 100, hoogte // 2))
+        scherm.blit(tekst2, (breedte // 2 - 170, hoogte // 2 + 50))
 
     pygame.display.flip()
 
