@@ -31,6 +31,9 @@ kogel_snelheid = 0.2
 aliens = []
 alien_breedte = 40
 alien_hoogte = 30
+alien_snelheid = 0.04
+alien_daling = 20
+alien_richting = 1  # de kant waar aliens heen gaan 1 voor rechts en -1 voor links
 
 for rij in range(3):
     for kolom in range(8):
@@ -94,6 +97,19 @@ while draait:
         # verwijder kogels die van het scherm zijn
         if kogel[1] < 0:
             kogels.remove(kogel)
+    
+    # beweeg de aliens
+    rand_bereikt = False
+    for alien in aliens:
+        alien[0] += alien_snelheid * alien_richting
+        # checkt of alien de rand van het scherm heeft bereikt
+        if alien[0] <= 0 or alien[0] >= breedte - alien_breedte:
+            rand_bereikt = True
+    # als de alien de rand heeft bereikt verandert de richting en dalen ze naar beneden 
+    if rand_bereikt:
+        alien_richting *= -1
+        for alien in aliens:
+            alien[1] += alien_daling
 
     check_collisie()
 
