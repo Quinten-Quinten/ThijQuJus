@@ -11,6 +11,8 @@ pygame.display.set_caption("Space Invaders")
 
 game_over = False
 game_state = "start"
+score = 0
+final_score = 0
 
 # kleuren
 zwart = (0, 0, 0)
@@ -25,18 +27,18 @@ schip_breedte = 30
 schip_hoogte = 50
 schip_x = breedte // 2 - schip_breedte // 2
 schip_y = hoogte - 60
-schip_snelheid = 0.15
+schip_snelheid = 0.25
 schip_grens_y = hoogte - 200
 
 #kogels
 kogels = []
-kogel_snelheid = 0.4
+kogel_snelheid = 0.6
 
 #aliens
 aliens = []
 alien_breedte = 40
 alien_hoogte = 30
-alien_snelheid = 0.1
+alien_snelheid = 0.20
 alien_daling = 20
 alien_richting = 1  # de kant waar aliens heen gaan 1 voor rechts en -1 voor links
 
@@ -62,6 +64,7 @@ def teken_aliens():
 
 # deze functie checkt of er een kogel een alien raakt en als dat zo is worden zowel de kogel als de alien verwijderd
 def check_collisie():
+    global score
     for kogel in kogels[:]:
         for alien in aliens[:]:
             if (kogel[0] < alien[0] + alien_breedte and
@@ -70,6 +73,7 @@ def check_collisie():
                 kogel[1] + 15 > alien[1]):
                 kogels.remove(kogel)
                 aliens.remove(alien)
+                score += 10
                 break
 
 # deze functie reset het spel naar de beginwaarden zodat je opnieuw kan spelen
@@ -80,6 +84,9 @@ def reset_game():
     schip_y = hoogte - 60
 
     kogels = []
+
+    global score
+    score = 0
 
     aliens = []
     for rij in range(3):
@@ -119,8 +126,7 @@ while draait:
 
         scherm.blit(titel, (breedte // 2 - 210, hoogte // 2 - 80))
         scherm.blit(knop, (breedte // 2 - 120, hoogte // 2))
-
-        pygame.display.flip()
+    
         continue
 
     # toetsen checken of er beweging plaats vindt
@@ -168,11 +174,14 @@ while draait:
             alien[1] < schip_y + schip_hoogte and
             alien[1] + alien_hoogte > schip_y):
             game_over = True
+            final_score = score
 
     scherm.fill(zwart)
     if not game_over:
         teken_kogels()
         teken_aliens()
+        score_text = pygame.font.SysFont("arial", 25).render("Score: " + str(score), True, wit)
+        scherm.blit(score_text, (10, 10))
 
     if not game_over:
         teken_schip(schip_x, schip_y)
@@ -181,8 +190,10 @@ while draait:
     if game_over:
         tekst1 = pygame.font.SysFont("arial", 40).render("Game Over", True, wit)
         tekst2 = pygame.font.SysFont("arial", 25).render("Druk op R om opnieuw te spelen", True, wit)
+        tekst3 = pygame.font.SysFont("arial", 25).render("Score: " + str(final_score), True, wit)
         scherm.blit(tekst1, (breedte // 2 - 100, hoogte // 2))
         scherm.blit(tekst2, (breedte // 2 - 170, hoogte // 2 + 50))
+        scherm.blit(tekst3, (10, 10))
 
     pygame.display.flip()
 
