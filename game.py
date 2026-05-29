@@ -34,6 +34,8 @@ schip_grens_y = hoogte - 200
 #kogels
 kogels = []
 kogel_snelheid = 0.6
+laatste_schot_tijd = 0
+schot_interval = 150  # tijd in milliseconden tussen schoten
 
 #aliens
 aliens = []
@@ -126,8 +128,11 @@ while draait:
         if event.type == pygame.KEYDOWN:
             # als de spatiebalk wordt ingedrukt, wordt er een kogel gemaakt
             if event.key == pygame.K_SPACE:
-                #maakt de kogel boven het schip
-                kogels.append([schip_x + schip_breedte // 2, schip_y])
+                nu = pygame.time.get_ticks()
+                # je kan weer schieten als er genoeg tijd is verstreken sinds het laatste schot
+                if nu >= laatste_schot_tijd + schot_interval:
+                    kogels.append([schip_x + schip_breedte // 2, schip_y])
+                    laatste_schot_tijd = nu
             # als de R toets wordt ingedrukt, wordt het spel gereset
             if event.key == pygame.K_r and game_over:
                 reset_game()
